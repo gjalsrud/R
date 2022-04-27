@@ -1,1 +1,53 @@
+head(mtcars)
 
+#산점도
+plot(mpg~wt,mtcars)
+
+#상관계수
+cor(mtcars$wt,mtcars$mpg)
+
+#회귀계수를 회귀식으로 추정
+model1<-lm(mpg~wt,mtcars)
+model1
+
+#회귀모형 해석
+summary(model1)
+summary(mtcars$mpg-model1$fitted.values) # 관측값 - 예측값
+
+#회귀모형 가정 확인 ( 정규성, 독립성, 등분산성 )
+
+#정규성  시각적 - 점과 선이 가까우면 정규성을 따른다
+qqnorm(model1$residuals)
+qqline(model1$residuals)
+
+#정규서 수치적 - p-value 값이 0.05 보다 크면 정규성을 따른다 
+shapiro.test(model1$residuals)
+
+# 독립성 시각적 - 잔차도표
+library(car)
+plot(model1$fitted.values,model1$residuals)
+
+#독립성 수치적 - p-value값이 0.05 보다 크면 독립성을 따른다 
+durbinWatsonTest(model1)
+
+#등분산성  시각적
+spreadLevelPlot(model1) # 분산의 정도가 균등한가 확인
+ncvTest(model1) # p-value 값이 0.05보다 크면 등분산성을 따른다
+
+#새로운값 예측 - confidence는 평균의 예측, prediction은 새로운 값의 포함으로 값이 더 크게 나온다
+model1<-lm(mpg~wt+I(wt^2),mtcars)
+model1
+plot(model1$fitted.values,model1$residuals)
+durbinWatsonTest(model1)
+
+predict(model1,newdata = data.frame(wt=c(4.5,5.5)))
+predict(model1,newdata = data.frame(wt=c(4.5)),
+        interval = "confidence")
+predict(model1,newdata = data.frame(wt=c(4.5)),
+        interval = "prediction")
+
+#회귀분석 결과 시각화
+library(ggplot2)
+ggplot(data = mtcars,aes(x=wt, y=mpg))+
+  geom_point()+
+  geom_smooth(method = "lm") 
