@@ -1,0 +1,57 @@
+독립변수 늘어날 수록 결정계수도 커진다 
+추가된 새로운 것에 대한 예측 : 과대적합 
+
+
+모든 가능한 조합 : 모든 경우를 시행 
+
+if(!require(mlbench)) install.pages("mlbench"); library(mlbench)
+if(!require(leaps)) install.packages("leaps"); library(leaps)
+data("BostonHousing")
+
+m1 <- regsubsets(medv ~., data=BostonHousing)
+summary(m1)
+summary(m1)$bic
+summary(m1)$adjr2
+plot(m1, scale="bic")
+plot(m1, scale="adjr2")
+plot(m1, scale="Cp")
+
+
+
+전진선택법 : 변수를 하나씩 추가해 가장 좋은 모형 선택
+아무것도 없는 상태에서 중요한 것 부터 대입 
+과거 많이 사용하는 방법으로 별로 좋지 않음 
+우도비 검정- 귀무가설은 m0=m1 대립가설은 같지 않다
+f값이 클수록 유의하다 
+
+ex)
+model0 <- lm(medv ~1, data=BostonHousing)
+add1(model0, scope = ~ crim + zn + indus + chas + nox + rm +
+       age + dis + rad + tax + ptratio + b + lstat, test="F")
+
+model1 <- lm(medv ~lstat, data=BostonHousing)
+add1(model1, scope = ~ crim + zn + indus + chas + nox + rm +
+       age + dis + rad + tax + ptratio + b + lstat, test="F")
+
+model3 <- lm(medv ~lstat+rm, data=BostonHousing)
+add1(model3, scope = ~ crim + zn + indus + chas + nox + rm +
+       age + dis + rad + tax + ptratio + b + lstat, test="F")
+
+
+model3 <- lm(medv ~lstat+rm+ptratio, data=BostonHousing)
+add1(model3, scope = ~ crim + zn + indus + chas + nox + rm +
+       age + dis + rad + tax + ptratio + b + lstat, test="F")
+
+
+
+
+후진제거법 : 전부 다 포함된 것이 좋은 모형 
+변수를 하나씩 제거 -차이가 작을수록 있어도 무의미하므로 제거한다
+
+ex)
+model0 <- lm(medv ~., data=BostonHousing)
+drop1(model0, scope = ~ crim + zn + indus + chas + nox + rm +
+        age + dis + rad + tax + ptratio + b + lstat, test="F")
+0.06으로 age의 수치가 가장 작으므로 제거 
+model0 <- lm(medv ~., data=BostonHousing)
+drop1(model0, scope = ~ crim + zn + indus + chas + nox + rm + dis + rad + tax + ptratio + b + lstat, test="F")
