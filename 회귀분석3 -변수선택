@@ -45,7 +45,8 @@ add1(model3, scope = ~ crim + zn + indus + chas + nox + rm +
 
 
 
-후진제거법 : 전부 다 포함된 것이 좋은 모형 
+
+후진제거법 : 전부 다 포함된 것이 좋은 모형 (통계학적으로 전진선택법 보다 선호)
 변수를 하나씩 제거 -차이가 작을수록 있어도 무의미하므로 제거한다
 
 ex)
@@ -55,3 +56,10 @@ drop1(model0, scope = ~ crim + zn + indus + chas + nox + rm +
 0.06으로 age의 수치가 가장 작으므로 제거 
 model0 <- lm(medv ~., data=BostonHousing)
 drop1(model0, scope = ~ crim + zn + indus + chas + nox + rm + dis + rad + tax + ptratio + b + lstat, test="F")
+
+
+단계적선택법 : 전진,후진 선택법 둘다 고려된 방법
+시간이 조금 더 오래 걸림 
+독립변수를 잘 선택 
+분산을 계산할때 cov 존재
+변수가 많으면 모형은 좋지만 복잡 예측에는 좋음 
