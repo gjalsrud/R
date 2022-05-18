@@ -1,1 +1,98 @@
 회귀모형은 평균을 예측하는 것 이상점이 있으면 좋지 않음, 지렛대점 영향점 이상점은 회귀모형의 질을 망치는 존재 
+y=f(x1,x2```xp)+->선형모형 reg
+지렛대점= high leverage : 다른점보다 떨어진 정도  
+ex)
+pubs <- data.frame(pubs=c(10,25,40,55,70,85,100,500),
+                   deaths=c(1043.822,2086.934,2951.086,3992.459,5088.003,6095.645,6923.497,10000),
+                   name=1:8)
+plot(pubs$pubs, pubs$deaths, pch=16)
+text(pubs$pubs, pubs$deaths, labels=pubs$name, pos=4)
+abline(lm(deaths~pubs, data=pubs), col="blue", lwd=2)
+fit.pub <- lm(deaths~pubs, data=pubs)
+influence(fit.pub)
+out=influence(fit.pub)
+# 지렛대점 모자행렬 : 일반적으로 평균의 2배 값
+out$hat=2*mean(out$hat)
+out$hat
+hatvalues(fit.pub)
+
+
+이상점= high discrepancy 
+선에서 떨이질수록 
+library(car)
+# 이상점 구하기 
+outlierTest(fit.pub)
+
+
+
+영향점= high influence
+점이 포함될때와 포함 되지 않을때 절편과 기울기 구하기 
+변화가 크면 영향을 미친다 (모형 변화)
+너무 큰 영향을 미치면 제거한다
+# 1
+outlierTest(fit.pub)
+# 2 
+rstudent(fit.pub)*sqrt(hatvalues(fit.pub)/(1-hatvalues(fit.pub)))
+#3
+dffits(fit.pub)
+
+# 세가지 한번에 확인 
+influencePlot(fit.pub)
+출력 되지 않으면 정상데이터로 확인 필요 없음 
+절대값이 2를 넘어가면 이상점 
+x축 hat value 자료가 2번째 수직선 라인을 넘어가면 지렛대점
+영향이 크면 클수록 동그라미가 커진다, 자료에서 가장 큰 숫자 영향점이다 
+
+#필요없는 -8 자료를 제외
+data2=fit.pub=lm(deaths~pubs,data = pubs[-8,])
+data2
+summary(data2)
+필요없는 자료를 제거함으로 코드를 돌리면 99% 설명력을 지닌다
+
+영향점,이상점 제외시키는 것이 좋은 모형 
+
+#plot(fit.pub)
+#첫번째 : 
+#두번째 : 잔차 
+#Q-Q plot : 정규성  
+#세번째 : 분산 
+#네번째 : 지렛대점,영향점,이상점
+
+
+data('airquality')
+head(airquality)
+model=lm(Ozone~Solar.R+Wind+Temp,data = airquality)
+summary(model)
+# 48번쨰 117번째를 제외한 값 
+model1=lm(Ozone~Solar.R+Wind+Temp,data = airquality[-c(48,117),])
+summary(model)
+
+
+#지렛대점
+which(hatvalues(model)>2*mean(hatvalues(model)))
+
+#이상점 
+outlierTest(model)
+
+#영향점 
+infIndexPlot(model)
+influencePlot(model)
+dffits(model)
+
+
+
+
+
+
+
+#1
+
+#2
+
+#3
+fit <- lm(mpg~disp+hp+wt+drat, data=mtcars)
+summary(fit)
+which(hatvalues(fit)>2*mean(hatvalues(fit)))
+outlierTest(fit)
+model1=lm(Ozone~Solar.R+Wind+Temp,data = airquality[-c(48,117),])
+summary(model)
