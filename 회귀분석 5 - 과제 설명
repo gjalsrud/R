@@ -1,0 +1,53 @@
+data=read.csv("C:/Users/OWNER/Downloads/manhattan (1).csv")
+head(data)
+library(car)
+names(data)
+dim(data)
+model0=lm(rent~.,data=data[,2:17]) 
+summary(model0)
+
+
+
+# 다중공선성  : 수치가 작으면 존재하지 않는다  
+vif(model0)
+
+# 모형 선택 : 같은 말로 변수 선택 
+if(!require(leaps)) install.packages("leaps"); library(leaps)
+m1 <- regsubsets(rent~.,data=data[,2:17])
+summary(m1)
+summary(m1)$adjr2
+summary(m1)$bic
+summary(m1)$which[8,] #8번쨰 변수에 대한 자료 
+
+model1=lm(rent~bathrooms+size_sqft+
+            floor+building_age_yrs+neighborhood,data=data)
+
+# 의심점 - Hat이 크다는 건 지렛대점 
+influencePlot(model1)
+data1=data[-C(5,185,1497,1960,2469,2737),]
+
+model2=lm(rent~bathrooms+size_sqft+
+            floor+building_age_yrs+neighborhood,data=data1)
+
+# 방향성을 보면서 estimate의 수치를 파악하기 
+summary(model0) # 0.8233 - multiple r squared
+summary(model1) # 0.8169 - multiple r squared
+summary(model2)
+summary(model3)
+
+influencePlot(model2)
+data2=data[-c(5,185,1497,1960,2469,2737,453,638,2269,2671),]
+data2
+
+
+# 정규성 
+shapiro.test(model)
+boxCox(model)
+# 독립성 
+durbinWatsonTest()
+# 등분산성 
+ncvTest()
+spreadLevelPlot()
+
+
+plot(data$rent,model0$fitted.values)
