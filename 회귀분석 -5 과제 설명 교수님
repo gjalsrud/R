@@ -1,0 +1,66 @@
+data <- read.csv("C:/Users/OWNER/Downloads/manhattan.csv")
+
+library(car)
+names(data)
+dim(data)
+head(data[,2:17])
+model0 <- lm(rent~., data=data[,2:17])
+summary(model0)
+
+# 1. 다중공선성
+vif(model0) # 다중공선성의 문제가 없음
+
+# 2. 모형선택(변수선택)
+if(!require(leaps)) install.packages("leaps"); library(leaps)
+
+m1 <- regsubsets(rent~., data=data[,2:17])
+
+summary(m1)
+summary(m1)$adjr2
+summary(m1)$bic
+summary(m1)$which[8,]
+
+model1 <- lm(rent~bathrooms+size_sqft+
+               floor+building_age_yrs+neighborhood, data=data)
+summary(model1)
+
+summary(model0)
+summary(model1)
+
+influencePlot(model1)
+data1 <- data[-c(5,185,1497,1960,2469,2737),]
+dim(data)
+dim(data1)
+
+model2 <- lm(rent~bathrooms+size_sqft+
+               floor+building_age_yrs+neighborhood, data=data1)
+
+summary(model2) #0.8233
+summary(model1) #0.8169
+
+influencePlot(model2)
+data2 <- data[-c(5,185,1497,1960,2469,2737,453,638,2269,2671),]
+
+model3 <- lm(rent~bathrooms+size_sqft+
+               floor+building_age_yrs+neighborhood, data=data2)
+
+summary(model3) #0.8262
+summary(model2) #0.8233
+summary(model1) #0.8169
+summary(model0) #0.8179
+
+influencePlot(model3)
+
+# 정규성
+shapiro.test(model3$residuals)
+boxCox(model3)
+
+# 독립성
+durbinWatsonTest(model3)
+
+# 등분산성
+ncvTest(model3)
+spreadLevelPlot(model3)
+
+a=plot(data2$rent, model3$fitted.values)
+
