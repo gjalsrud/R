@@ -62,5 +62,5 @@ durbinWatsonTest(model3)
 ncvTest(model3)
 spreadLevelPlot(model3)
 
-a=plot(data2$rent, model3$fitted.values)
+plot(data2$rent, model3$fitted.values)
 
