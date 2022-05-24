@@ -23,21 +23,24 @@ model1=lm(rent~bathrooms+size_sqft+
             floor+building_age_yrs+neighborhood,data=data)
 
 # 의심점 - Hat이 크다는 건 지렛대점 
-influencePlot(model1)
-data1=data[-C(5,185,1497,1960,2469,2737),]
+influencePlot(model1) # 의심점 list
+data1=data[-c(5,185,1497,1960,2469,2737),]
+#비교 
+dim(data)
+dim(data1)
 
 model2=lm(rent~bathrooms+size_sqft+
             floor+building_age_yrs+neighborhood,data=data1)
+summary(model2) # 0.8233
+summary(model1) # 0.8169
 
 # 방향성을 보면서 estimate의 수치를 파악하기 
-summary(model0) # 0.8233 - multiple r squared
+summary(model0) # 0.8179 - multiple r squared
 summary(model1) # 0.8169 - multiple r squared
-summary(model2)
-summary(model3)
+summary(model2) # 0.8233
+summary(model3) # 0.8262
 
-influencePlot(model2)
-data2=data[-c(5,185,1497,1960,2469,2737,453,638,2269,2671),]
-data2
+influencePlot(model3)
 
 
 # 정규성 
