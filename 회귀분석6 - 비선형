@@ -1,7 +1,3 @@
-library(car)
-body <- read.csv("https://scholar.harvard.edu/files/gerrard/files/nhanes_body.txt")
-attach(body)
-dim(body) # 총 8,602개의 자료, 5개의 변수 
 head(body)
 boxplot(height~age,body) 
 library(ggplot2)
@@ -46,14 +42,21 @@ summary(fit.adults.l3)
 plot(height~age, data=adults, pch=16, col="gray")
 points(adults$age, fit.adults.l3$fitted.values, pch=16)
 
-libra
-attach(body)
-fit.spline <- smooth.spline(height ~ age, nknots=4)
+
 # 여기서 nknots는 매듭점이라 한다. 
-# nknots=4 점들 사이를 3차식으로 만들면서 자료를 5개로 쪼갠다, nknots=? ?값이 너무 크면 좋지 않지만, 적당히 크면 smooth한 모양  
+# nknots=4 점들 사이를 3차식으로 만들면서 자료를 5개로 쪼갠다, nknots=? ?값이 너무 크면 좋지 않지만, 적당히 크면 smooth한 모양 
+library(car)
+attach(body)
+fit.spline <- smooth.spline(height ~ age,nknots=4)
 plot(age, height, pch=16, col="gray", xlab="age", ylab="Height", main="Height vs Age")
 lines(fit.spline, pch=16, lwd=2)
+fit.spline
+# lambda 값은 부드러운 정도- 알 필요 없음 
 
 
 # 기말고사 문제 주관식 
 # spline 회귀 , 국소 회귀모형 등으로 구분하며  smooth한 함수를 그릴수 있다 
+# 1. spline은 3차식의 결합 
+# 2. smooth.spline
+# 예측값은 생성가능하지만, summary를 사용해도 선형식을 보는 것은 불가능 수치로 보이지 않기에 남에게 설명 어려움 
+# 예측은 쉽지만 과정의 설명이 어려움
