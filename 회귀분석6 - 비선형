@@ -1,1 +1,59 @@
+library(car)
+body <- read.csv("https://scholar.harvard.edu/files/gerrard/files/nhanes_body.txt")
+attach(body)
+dim(body) # 총 8,602개의 자료, 5개의 변수 
+head(body)
+boxplot(height~age,body) 
+library(ggplot2)
+ggplot(data=body, aes(x=age,y=height))+
+  geom_point()+geom_smooth(method = "lm")
+fit.l1 <- lm(height~age)
+summary(fit.l1) # 잔차도표의 패턴이 존재하면 안좋은 모형 
 
+#2차 선형모형
+fit.l2 <- lm(height~age+I(age^2))
+plot(age, height, pch=16, col="gray", xlab="age", ylab="Height", main="Height vs Age")
+points(age, fit.l2$fitted.values, pch=16, cex=0.1)
+
+#3차 선형모형
+fit.l3 <- lm(height~age+I(age^2)+I(age^3))
+plot(age, height, pch=16, col="gray", xlab="age", ylab="Height", main="Height vs Age")
+points(age, fit.l3$fitted.values, pch=16, cex=0.1)
+
+#4차 선형모형
+fit.l4 <- lm(height~age+I(age^2)+I(age^3)+I(age^4))
+plot(age, height, pch=16, col="gray", xlab="age", ylab="Height", main="Height vs Age")
+points(age, fit.l4$fitted.values, pch=16, cex=0.1)
+
+# 차수가 높아질수록 울퉁불퉁 모양 , 차수가 높아지면 추정력은 좋지만, 가운데 데이터는 설명력이 좋지만 끝부분은 데이터에 의해 결정되기 때문에 설명력이 좋지 않기에 3차까지로
+# 3차 식으로 모델링 하는법 : 데이터 구간으로 쪼개기
+
+# 18살 기준으로 쪼개기 
+detach(body)
+youths <- body[body$age<18,]
+adults <- body[body$age>=18,]
+# 18세 이하
+fit.youths.l3 <- lm(height~age+I(age^2)+I(age^3),
+                    data=youths)
+summary(fit.youths.l3) # 93% 설명력 
+
+plot(height~age, data=youths, pch=16, col="gray")
+points(youths$age, fit.youths.l3$fitted.values, pch=16)
+
+# 18세 이상 
+fit.adults.l3 <- lm(height~age+I(age^2)+I(age^3), data=adults)
+summary(fit.adults.l3)
+plot(height~age, data=adults, pch=16, col="gray")
+points(adults$age, fit.adults.l3$fitted.values, pch=16)
+
+libra
+attach(body)
+fit.spline <- smooth.spline(height ~ age, nknots=4)
+# 여기서 nknots는 매듭점이라 한다. 
+# nknots=4 점들 사이를 3차식으로 만들면서 자료를 5개로 쪼갠다, nknots=? ?값이 너무 크면 좋지 않지만, 적당히 크면 smooth한 모양  
+plot(age, height, pch=16, col="gray", xlab="age", ylab="Height", main="Height vs Age")
+lines(fit.spline, pch=16, lwd=2)
+
+
+# 기말고사 문제 주관식 
+# spline 회귀 , 국소 회귀모형 등으로 구분하며  smooth한 함수를 그릴수 있다 
