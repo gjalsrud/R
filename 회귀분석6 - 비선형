@@ -1,3 +1,7 @@
+library(car)
+body <- read.csv("https://scholar.harvard.edu/files/gerrard/files/nhanes_body.txt")
+attach(body)
+dim(body) # 총 8,602개의 자료, 5개의 변수 
 head(body)
 boxplot(height~age,body) 
 library(ggplot2)
