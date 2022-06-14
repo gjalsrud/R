@@ -63,7 +63,7 @@ data('airquality')
 head(airquality)
 model=lm(Ozone~Solar.R+Wind+Temp,data = airquality)
 summary(model)
-# 48번쨰 117번째를 제외한 값 
+# 48번째 117번째를 제외한 값 
 model1=lm(Ozone~Solar.R+Wind+Temp,data = airquality[-c(48,117),])
 summary(model)
 
